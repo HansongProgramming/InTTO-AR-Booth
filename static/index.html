@@ -6,12 +6,56 @@
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <h1>🤪 Welcome to the AR Booth!</h1>
   <div class="camera">
     <img id="video-frame" src="/frame" alt="Live Feed">
   </div>
-  <button onclick="takePhoto()">📸 Take Picture</button>
+    <button onclick="handlePhotoClick()"><img src="../static/images/camera.png" alt=""></button>
+    <select name="" id="timer-select">
+      <option value="0">0 Second</option>
+      <option value="1000">1 Second</option>
+      <option value="5000">5 Seconds</option>
+      <option value="10000">10 Seconds</option>
+    </select>
+    <div id="countdown" style="position: absolute; top: 10%; left: 50%; transform: translateX(-50%); font-size: 4rem; font-weight: bold; color: red; display: none;"></div>
+    <img src="../static/images/sponsor.png"  class="sponsor">
+<script>
+  function refreshFrame() {
+    const img = document.getElementById("video-frame");
+    img.src = `/frame?cachebust=${new Date().getTime()}`;
+  }
+  setInterval(refreshFrame, 100);
 
-  <script src="/static/script.js"></script>
+  function handlePhotoClick() {
+    const delay = parseInt(document.getElementById("timer-select").value);
+    if (delay === 0) {
+      takePhoto();
+      return;
+    }
+
+    const countdownEl = document.getElementById("countdown");
+    let secondsLeft = delay / 1000;
+    countdownEl.textContent = secondsLeft;
+    countdownEl.style.display = "block";
+
+    const countdownInterval = setInterval(() => {
+      secondsLeft--;
+      if (secondsLeft <= 0) {
+        clearInterval(countdownInterval);
+        countdownEl.style.display = "none";
+        takePhoto();
+      } else {
+        countdownEl.textContent = secondsLeft;
+      }
+    }, 1000);
+  }
+
+  function takePhoto() {
+    fetch("/take_photo", { method: "POST" })
+      .then(res => res.json())
+      .then(data => {
+        alert("📸 Photo saved: " + data.path);
+      });
+  }
+</script>
 </body>
 </html>

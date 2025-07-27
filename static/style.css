@@ -1,17 +1,74 @@
-body {
+/* Apply border-box globally */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   font-family: sans-serif;
-  text-align: center;
   background: #fafafa;
 }
 
-.camera {
-  margin: 20px auto;
-  max-width: 80%;
+/* Video frame fills entire screen without scroll */
+#video-frame {
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover; /* Optional: ensures video content fills the element */
+  display: block;
+  border: none; /* Remove border to avoid overflow issues */
+  border-radius: 0; /* Optional: remove if you want sharp edges */
 }
 
-#video-frame {
-  width: 100%;
-  max-width: 800px;
-  border: 5px solid #000;
-  border-radius: 10px;
+/* Button stays within visible area */
+button {
+  position: absolute;
+  z-index: 9999;
+  top: 90%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: transparent;
+  width: 5vw;
+  height: 5vw;
+  aspect-ratio: 1/1;
+  border: none;
+  outline: none;
+    transition-duration: 0.4s;
+}
+
+select{
+  position: absolute;
+  top: 90%;
+  left: 60%;
+  width: fit-content;
+  height: 5vw;
+  transform: translate(-20%, -50%);
+  background-color: rgba(0,0,0,0.5);
+  padding-left: 2rem;
+  padding-right: 2rem;
+  color: white;
+  font-size: 2rem;
+  border-radius: 40px;
+}
+
+img{
+  width: inherit;
+  height: inherit;
+}
+
+button:hover{
+  scale: 1.2;
+}
+
+.sponsor{
+  position: absolute;
+  top: 86%;
+  left: 8%;
+  width: 15vw;
+  height: auto;
 }

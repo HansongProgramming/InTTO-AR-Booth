@@ -56,9 +56,9 @@ def map_image_to_marker(frame, marker_corners, overlay_img, scale=2.0, offset_ra
     down_vec = bottom_left - top_left
     unit_down = down_vec / np.linalg.norm(down_vec)
     unit_perp = np.array([-unit_right[1], unit_right[0]])
-
-    offset = unit_right * (marker_width * offset_ratio[0]) + unit_down * (marker_width * offset_ratio[1])
-    new_top_left = top_right + offset
+    offset_up = -unit_down * (scaled_height + 10)
+    offset_center = unit_right * ((marker_width - scaled_width) / 2)
+    new_top_left = top_left + offset_center + offset_up
     new_top_right = new_top_left + unit_right * scaled_width
     new_bottom_right = new_top_right + unit_perp * scaled_height
     new_bottom_left = new_top_left + unit_perp * scaled_height
@@ -67,8 +67,8 @@ def map_image_to_marker(frame, marker_corners, overlay_img, scale=2.0, offset_ra
     src_pts = np.array([[0, 0], [src_w, 0], [src_w, src_h], [0, src_h]], dtype=np.float32)
 
     H, _ = cv2.findHomography(src_pts, dst_pts)
-    warped_rgb = cv2.warpPerspective(overlay_rgb, H, (frame_w, frame_h))
-    warped_alpha = cv2.warpPerspective(overlay_alpha, H, (frame_w, frame_h))
+    warped_rgb = cv2.warpPerspective(overlay_rgb, H, (frame_w, frame_h), flags=cv2.INTER_LANCZOS4)
+    warped_alpha = cv2.warpPerspective(overlay_alpha, H, (frame_w, frame_h), flags=cv2.INTER_LANCZOS4)
 
     # Normalize alpha to range 0.0 to 1.0
     alpha_mask = warped_alpha.astype(float) / 255.0
@@ -95,7 +95,7 @@ def video_loop():
                 marker_id = ids[i][0]
                 overlay_img = marker_images.get(marker_id)
                 if overlay_img is not None:
-                    frame = map_image_to_marker(frame, corner, overlay_img, scale=2.5)
+                    frame = map_image_to_marker(frame, corner, overlay_img, scale=6.5)
 
         with frame_lock:
             latest_frame = frame.copy()
