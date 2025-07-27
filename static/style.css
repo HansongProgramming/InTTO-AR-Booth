@@ -1,0 +1,17 @@
+body {
+  font-family: sans-serif;
+  text-align: center;
+  background: #fafafa;
+}
+
+.camera {
+  margin: 20px auto;
+  max-width: 80%;
+}
+
+#video-frame {
+  width: 100%;
+  max-width: 800px;
+  border: 5px solid #000;
+  border-radius: 10px;
+}
