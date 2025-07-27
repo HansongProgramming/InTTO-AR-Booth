@@ -16,8 +16,10 @@
       <option value="5000">5 Seconds</option>
       <option value="10000">10 Seconds</option>
     </select>
-    <div id="countdown" style="position: absolute; top: 10%; left: 50%; transform: translateX(-50%); font-size: 4rem; font-weight: bold; color: red; display: none;"></div>
+    <div id="countdown" style="position: absolute; top: 10%; left: 50%; transform: translateX(-50%); font-size: 4rem; font-weight: bold; color: rgb(255, 255, 255); display: none;"></div>
     <img src="../static/images/sponsor.png"  class="sponsor">
+    <div id="flash-message">Yay! Photo Captured!</div>
+
 <script>
   function refreshFrame() {
     const img = document.getElementById("video-frame");
@@ -53,9 +55,17 @@
     fetch("/take_photo", { method: "POST" })
       .then(res => res.json())
       .then(data => {
-        alert("📸 Photo saved: " + data.path);
+        // Show the flash message
+        const flash = document.getElementById("flash-message");
+        flash.classList.add("show");
+
+        // Hide it after 2 seconds
+        setTimeout(() => {
+          flash.classList.remove("show");
+        }, 2000);
       });
   }
+
 </script>
 </body>
 </html>
