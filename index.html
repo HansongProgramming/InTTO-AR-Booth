@@ -142,8 +142,6 @@
 function takeSnapshot() {
   const sceneEl = document.querySelector("a-scene");
   const canvas3D = sceneEl.renderer.domElement;
-
-  // Find the video element used by AR.js (camera feed)
   const video = document.querySelector("video");
 
   if (!video || video.readyState < 2) {
@@ -151,24 +149,24 @@ function takeSnapshot() {
     return;
   }
 
-  // Create a final canvas with the same size as the WebGL canvas
   const finalCanvas = document.createElement("canvas");
   finalCanvas.width = canvas3D.width;
   finalCanvas.height = canvas3D.height;
   const ctx = finalCanvas.getContext("2d");
 
-  // Draw the video frame (camera) first
+  // Draw camera feed
   ctx.drawImage(video, 0, 0, finalCanvas.width, finalCanvas.height);
 
-  // Draw the WebGL content on top
+  // Draw 3D overlay
   ctx.drawImage(canvas3D, 0, 0, finalCanvas.width, finalCanvas.height);
 
-  // Save or preview the combined image
+  // Save image
   const link = document.createElement("a");
   link.href = finalCanvas.toDataURL("image/png");
   link.download = "ar_snapshot.png";
   link.click();
 }
+
 
   </script>
 </body>
