@@ -57,8 +57,11 @@
   </div>
 
   <!-- AR Scene -->
-  <a-scene embedded arjs="detectionMode: mono_and_matrix; matrixCodeType: 5x5;" vr-mode-ui="enabled: false">
-    <!-- Marker for ID 1 -->
+<a-scene embedded
+         vr-mode-ui="enabled: false"
+         screenshot
+         renderer="preserveDrawingBuffer: true"
+         arjs="detectionMode: mono_and_matrix; matrixCodeType: 5x5;">    <!-- Marker for ID 1 -->
     <a-marker type="barcode" value="1" smooth="true">
       <a-image id="img-1" position="0 0.5 0" rotation="-90 0 0" opacity="0"
         animation="property: opacity; to: 1; dur: 1000; easing: easeInSine; delay: 500">
