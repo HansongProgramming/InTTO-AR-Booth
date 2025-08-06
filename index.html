@@ -2,9 +2,10 @@
 <html>
 
 <head>
-  <title>UCoLab AR Snapshot</title>
+  <title>UCoLab AR</title>
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
     html,
     body {
@@ -19,7 +20,7 @@
       position: fixed;
       top: 10px;
       left: 10px;
-      z-index: 999;
+      z-index: 10;
       background: rgba(0, 0, 0, 0.5);
       color: white;
       padding: 10px;
@@ -43,45 +44,54 @@
 </head>
 
 <body>
+  <!-- UI -->
   <div id="ui">
     <label for="delay">Select delay:</label>
     <select id="delay">
       <option value="1000">1 second</option>
-      <option value="3000">3 seconds</option>
       <option value="5000">5 seconds</option>
+      <option value="10000">10 seconds</option>
     </select>
     <br>
     <button id="snapBtn">Take Snapshot</button>
     <div id="countdown"></div>
   </div>
 
-  <a-scene embedded
-           vr-mode-ui="enabled: false"
-           renderer="preserveDrawingBuffer: true; antialias: true"
-           arjs="sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 5x5;">
-    
-    <!-- Markers -->
-    <a-marker type="barcode" value="1">
-      <a-image id="img-1" position="0 0.5 0" rotation="-90 0 0" visible="true"></a-image>
+  <!-- AR Scene -->
+  <a-scene embedded arjs="detectionMode: mono_and_matrix; matrixCodeType: 5x5;" vr-mode-ui="enabled: false">
+    <!-- Marker for ID 1 -->
+    <a-marker type="barcode" value="1" smooth="true">
+      <a-image id="img-1" position="0 0.5 0" rotation="-90 0 0" opacity="0"
+        animation="property: opacity; to: 1; dur: 1000; easing: easeInSine; delay: 500">
+      </a-image>
     </a-marker>
 
-    <a-marker type="barcode" value="2">
-      <a-image id="img-2" position="0 0.5 0" rotation="-90 0 0" visible="true"></a-image>
+    <!-- Marker for ID 2 -->
+    <a-marker type="barcode" value="2" smooth="true">
+      <a-image id="img-2" position="0 0.5 0" rotation="-90 0 0" opacity="0"
+        animation="property: opacity; to: 1; dur: 1000; easing: easeInSine; delay: 500">
+      </a-image>
     </a-marker>
 
-    <a-marker type="barcode" value="4">
-      <a-image id="img-4" position="0 0.5 0" rotation="-90 0 0" visible="true"></a-image>
+    <!-- Marker for ID 4 -->
+    <a-marker type="barcode" value="4" smooth="true">
+      <a-image id="img-4" position="0 0.5 0" rotation="-90 0 0" opacity="0"
+        animation="property: opacity; to: 1; dur: 1000; easing: easeInSine; delay: 500">
+      </a-image>
     </a-marker>
 
-    <a-marker type="barcode" value="5">
-      <a-image id="img-5" position="0 0.5 0" rotation="-90 0 0" visible="true"></a-image>
+    <!-- Marker for ID 5 -->
+    <a-marker type="barcode" value="5" smooth="true">
+      <a-image id="img-5" position="0 0.5 0" rotation="-90 0 0" opacity="0"
+        animation="property: opacity; to: 1; dur: 1000; easing: easeInSine; delay: 500">
+      </a-image>
     </a-marker>
 
     <a-entity camera></a-entity>
   </a-scene>
 
+  <!-- Load images dynamically -->
   <script>
-    // Map marker images
     const imageMap = {
       1: "https://raw.githubusercontent.com/HansongProgramming/agguimangan-AR/main/source/ID1.png",
       2: "https://raw.githubusercontent.com/HansongProgramming/agguimangan-AR/main/source/ID2.png",
@@ -93,9 +103,9 @@
       const img = new Image();
       img.src = url;
       img.onload = function () {
-        const aspect = img.naturalWidth / img.naturalHeight;
+        const aspectRatio = img.naturalWidth / img.naturalHeight;
         const baseHeight = 2;
-        const baseWidth = aspect * baseHeight;
+        const baseWidth = aspectRatio * baseHeight;
 
         const aImage = document.getElementById(`img-${id}`);
         if (aImage) {
@@ -105,11 +115,14 @@
         }
       };
     });
+  </script>
 
-    // Snapshot logic
+  <!-- Snapshot logic -->
+  <script>
     const snapBtn = document.getElementById("snapBtn");
     const delaySelect = document.getElementById("delay");
     const countdownDiv = document.getElementById("countdown");
+    const ui = document.getElementById("ui");
 
     snapBtn.addEventListener("click", () => {
       const delay = parseInt(delaySelect.value, 10);
@@ -123,41 +136,23 @@
       }, 1000);
 
       setTimeout(() => {
-        captureSnapshot();
+        takePageScreenshot();
         countdownDiv.textContent = "";
       }, delay);
     });
 
-    function captureSnapshot() {
-      const sceneEl = document.querySelector("a-scene");
-      const canvas3D = sceneEl.renderer.domElement;
-      const video = document.querySelector("video");
+    function takePageScreenshot() {
+      ui.style.display = "none"; // Hide UI for clean screenshot
 
-      if (!video || video.readyState < 2) {
-        alert("Camera not ready yet!");
-        return;
-      }
-
-      const width = canvas3D.width;
-      const height = canvas3D.height;
-
-      // Create final canvas
-      const finalCanvas = document.createElement("canvas");
-      finalCanvas.width = width;
-      finalCanvas.height = height;
-      const ctx = finalCanvas.getContext("2d");
-
-      // Draw the camera feed (video)
-      ctx.drawImage(video, 0, 0, width, height);
-
-      // Then draw the AR overlay (WebGL canvas)
-      ctx.drawImage(canvas3D, 0, 0, width, height);
-
-      // Download
-      const link = document.createElement("a");
-      link.href = finalCanvas.toDataURL("image/png");
-      link.download = "ar_snapshot.png";
-      link.click();
+      setTimeout(() => {
+        html2canvas(document.body).then(canvas => {
+          const link = document.createElement("a");
+          link.href = canvas.toDataURL("image/png");
+          link.download = "page_screenshot.png";
+          link.click();
+          ui.style.display = "block"; // Restore UI
+        });
+      }, 200); // slight delay ensures UI is hidden
     }
   </script>
 </body>
