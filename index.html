@@ -140,32 +140,21 @@
     });
 
 function takeSnapshot() {
-  const sceneEl = document.querySelector("a-scene");
-  const canvas3D = sceneEl.renderer.domElement;
-  const video = document.querySelector("video");
+  const sceneEl = document.querySelector('a-scene');
+  const screenshotCanvas = sceneEl.components.screenshot.getCanvas('perspective');
 
-  if (!video || video.readyState < 2) {
-    alert("Camera not ready yet!");
+  if (!screenshotCanvas) {
+    alert("Screenshot not ready yet!");
     return;
   }
 
-  const finalCanvas = document.createElement("canvas");
-  finalCanvas.width = canvas3D.width;
-  finalCanvas.height = canvas3D.height;
-  const ctx = finalCanvas.getContext("2d");
-
-  // Draw camera feed
-  ctx.drawImage(video, 0, 0, finalCanvas.width, finalCanvas.height);
-
-  // Draw 3D overlay
-  ctx.drawImage(canvas3D, 0, 0, finalCanvas.width, finalCanvas.height);
-
-  // Save image
+  // Create download link
   const link = document.createElement("a");
-  link.href = finalCanvas.toDataURL("image/png");
+  link.href = screenshotCanvas.toDataURL("image/png");
   link.download = "ar_snapshot.png";
   link.click();
 }
+
 
 
   </script>
