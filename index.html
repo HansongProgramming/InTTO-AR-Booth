@@ -118,43 +118,52 @@
   </script>
 
   <!-- Snapshot logic -->
-  <script>
-    const snapBtn = document.getElementById("snapBtn");
-    const delaySelect = document.getElementById("delay");
-    const countdownDiv = document.getElementById("countdown");
-    const ui = document.getElementById("ui");
+<script>
+  const snapBtn = document.getElementById("snapBtn");
+  const delaySelect = document.getElementById("delay");
+  const countdownDiv = document.getElementById("countdown");
+  const ui = document.getElementById("ui");
 
-    snapBtn.addEventListener("click", () => {
-      const delay = parseInt(delaySelect.value, 10);
-      let secondsLeft = delay / 1000;
-      countdownDiv.textContent = secondsLeft;
+  snapBtn.addEventListener("click", () => {
+    const delay = parseInt(delaySelect.value, 10);
+    let secondsLeft = delay / 1000;
+    countdownDiv.textContent = secondsLeft;
 
-      const interval = setInterval(() => {
-        secondsLeft--;
-        countdownDiv.textContent = secondsLeft > 0 ? secondsLeft : "Smile!";
-        if (secondsLeft <= 0) clearInterval(interval);
-      }, 1000);
+    const interval = setInterval(() => {
+      secondsLeft--;
+      countdownDiv.textContent = secondsLeft > 0 ? secondsLeft : "Smile!";
+      if (secondsLeft <= 0) clearInterval(interval);
+    }, 1000);
 
-      setTimeout(() => {
-        takePageScreenshot();
-        countdownDiv.textContent = "";
-      }, delay);
-    });
+    setTimeout(() => {
+      takeARCanvasScreenshot();
+      countdownDiv.textContent = "";
+    }, delay);
+  });
 
-    function takePageScreenshot() {
-      ui.style.display = "none"; // Hide UI for clean screenshot
+  function takeARCanvasScreenshot() {
+    ui.style.display = "none"; // Hide UI
 
-      setTimeout(() => {
-        html2canvas(document.body).then(canvas => {
-          const link = document.createElement("a");
-          link.href = canvas.toDataURL("image/png");
-          link.download = "page_screenshot.png";
-          link.click();
-          ui.style.display = "block"; // Restore UI
-        });
-      }, 200); // slight delay ensures UI is hidden
-    }
-  </script>
+    // Wait for UI to disappear
+    setTimeout(() => {
+      const canvas = document.querySelector('canvas');
+
+      if (canvas) {
+        const imageDataURL = canvas.toDataURL('image/png');
+
+        const link = document.createElement('a');
+        link.href = imageDataURL;
+        link.download = 'ar_screenshot.png';
+        link.click();
+      } else {
+        alert("Could not find the AR canvas.");
+      }
+
+      ui.style.display = "block"; // Show UI again
+    }, 200);
+  }
+</script>
+
 </body>
 
 </html>
