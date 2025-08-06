@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <title>UCoLab AR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
     html,
     body {
@@ -117,53 +117,54 @@
     });
   </script>
 
-  <!-- Snapshot logic -->
-<script>
-  const snapBtn = document.getElementById("snapBtn");
-  const delaySelect = document.getElementById("delay");
-  const countdownDiv = document.getElementById("countdown");
-  const ui = document.getElementById("ui");
+  <!-- Snapshot Logic -->
+  <script>
+    const snapBtn = document.getElementById("snapBtn");
+    const delaySelect = document.getElementById("delay");
+    const countdownDiv = document.getElementById("countdown");
+    const ui = document.getElementById("ui");
 
-  snapBtn.addEventListener("click", () => {
-    const delay = parseInt(delaySelect.value, 10);
-    let secondsLeft = delay / 1000;
-    countdownDiv.textContent = secondsLeft;
+    snapBtn.addEventListener("click", () => {
+      const delay = parseInt(delaySelect.value, 10);
+      let secondsLeft = delay / 1000;
+      countdownDiv.textContent = secondsLeft;
 
-    const interval = setInterval(() => {
-      secondsLeft--;
-      countdownDiv.textContent = secondsLeft > 0 ? secondsLeft : "Smile!";
-      if (secondsLeft <= 0) clearInterval(interval);
-    }, 1000);
+      const interval = setInterval(() => {
+        secondsLeft--;
+        countdownDiv.textContent = secondsLeft > 0 ? secondsLeft : "Smile!";
+        if (secondsLeft <= 0) clearInterval(interval);
+      }, 1000);
 
-    setTimeout(() => {
-      takeARCanvasScreenshot();
-      countdownDiv.textContent = "";
-    }, delay);
-  });
+      setTimeout(() => {
+        takeARCanvasScreenshot();
+        countdownDiv.textContent = "";
+      }, delay);
+    });
 
-  function takeARCanvasScreenshot() {
-    ui.style.display = "none"; // Hide UI
+    function takeARCanvasScreenshot() {
+      ui.style.display = "none"; // Hide UI
 
-    // Wait for UI to disappear
-    setTimeout(() => {
-      const canvas = document.querySelector('canvas');
+      setTimeout(() => {
+        const canvas = document.querySelector('a-scene').canvas;
 
-      if (canvas) {
-        const imageDataURL = canvas.toDataURL('image/png');
+        if (canvas) {
+          try {
+            const imageDataURL = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.href = imageDataURL;
+            link.download = 'ar_screenshot.png';
+            link.click();
+          } catch (e) {
+            alert("Failed to capture screenshot. Try again.");
+          }
+        } else {
+          alert("Canvas not found.");
+        }
 
-        const link = document.createElement('a');
-        link.href = imageDataURL;
-        link.download = 'ar_screenshot.png';
-        link.click();
-      } else {
-        alert("Could not find the AR canvas.");
-      }
-
-      ui.style.display = "block"; // Show UI again
-    }, 200);
-  }
-</script>
-
+        ui.style.display = "block"; // Show UI again
+      }, 800); // Increased delay for canvas to fully render
+    }
+  </script>
 </body>
 
 </html>
