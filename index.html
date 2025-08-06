@@ -43,7 +43,7 @@
 </head>
 
 <body>
-  <!-- UI -->
+  <!-- UI Controls -->
   <div id="ui">
     <label for="delay">Select delay:</label>
     <select id="delay">
@@ -57,42 +57,37 @@
   </div>
 
   <!-- AR Scene -->
-<a-scene embedded
-         vr-mode-ui="enabled: false"
-         screenshot
-         renderer="preserveDrawingBuffer: true"
-         arjs="detectionMode: mono_and_matrix; matrixCodeType: 5x5;">    <!-- Marker for ID 1 -->
+  <a-scene embedded
+           vr-mode-ui="enabled: false"
+           screenshot
+           renderer="preserveDrawingBuffer: true"
+           arjs="detectionMode: mono_and_matrix; matrixCodeType: 5x5;">
+    
+    <!-- Markers -->
     <a-marker type="barcode" value="1" smooth="true">
       <a-image id="img-1" position="0 0.5 0" rotation="-90 0 0" opacity="0"
-        animation="property: opacity; to: 1; dur: 1000; easing: easeInSine; delay: 500">
-      </a-image>
+        animation="property: opacity; to: 1; dur: 1000; easing: easeInSine; delay: 500"></a-image>
     </a-marker>
 
-    <!-- Marker for ID 2 -->
     <a-marker type="barcode" value="2" smooth="true">
       <a-image id="img-2" position="0 0.5 0" rotation="-90 0 0" opacity="0"
-        animation="property: opacity; to: 1; dur: 1000; easing: easeInSine; delay: 500">
-      </a-image>
+        animation="property: opacity; to: 1; dur: 1000; easing: easeInSine; delay: 500"></a-image>
     </a-marker>
 
-    <!-- Marker for ID 4 -->
     <a-marker type="barcode" value="4" smooth="true">
       <a-image id="img-4" position="0 0.5 0" rotation="-90 0 0" opacity="0"
-        animation="property: opacity; to: 1; dur: 1000; easing: easeInSine; delay: 500">
-      </a-image>
+        animation="property: opacity; to: 1; dur: 1000; easing: easeInSine; delay: 500"></a-image>
     </a-marker>
 
-    <!-- Marker for ID 5 -->
     <a-marker type="barcode" value="5" smooth="true">
       <a-image id="img-5" position="0 0.5 0" rotation="-90 0 0" opacity="0"
-        animation="property: opacity; to: 1; dur: 1000; easing: easeInSine; delay: 500">
-      </a-image>
+        animation="property: opacity; to: 1; dur: 1000; easing: easeInSine; delay: 500"></a-image>
     </a-marker>
 
     <a-entity camera></a-entity>
   </a-scene>
 
-  <!-- Load images dynamically -->
+  <!-- Load marker images dynamically -->
   <script>
     const imageMap = {
       1: "https://raw.githubusercontent.com/HansongProgramming/agguimangan-AR/main/source/ID1.png",
@@ -142,24 +137,23 @@
       }, delay);
     });
 
-function takeSnapshot() {
-  const sceneEl = document.querySelector('a-scene');
-  const screenshotCanvas = sceneEl.components.screenshot.getCanvas('perspective');
+    function takeSnapshot() {
+      const sceneEl = document.querySelector('a-scene');
 
-  if (!screenshotCanvas) {
-    alert("Screenshot not ready yet!");
-    return;
-  }
+      // Use A-Frame's screenshot component (includes AR overlays!)
+      const screenshotCanvas = sceneEl.components.screenshot.getCanvas('perspective');
 
-  // Create download link
-  const link = document.createElement("a");
-  link.href = screenshotCanvas.toDataURL("image/png");
-  link.download = "ar_snapshot.png";
-  link.click();
-}
+      if (!screenshotCanvas) {
+        alert("Screenshot not ready yet!");
+        return;
+      }
 
-
-
+      // Download the snapshot
+      const link = document.createElement("a");
+      link.href = screenshotCanvas.toDataURL("image/png");
+      link.download = "ar_snapshot.png";
+      link.click();
+    }
   </script>
 </body>
 
